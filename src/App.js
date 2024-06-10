@@ -1,23 +1,56 @@
-import logo from './logo.svg';
 import './App.css';
+import * as React from 'react';
+import moment from 'moment-timezone';
 
 function App() {
+  const [timezones, setTimezones] = React.useState([]);
+  const [selectedTimezone, setSelectedTimezone] = React.useState('');
+  const [userTZ, setUserTZ] = React.useState('');
+
+  React.useEffect(() => {
+    const detectTZ = () => {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      setSelectedTimezone(tz);
+      setUserTZ(tz);
+    };
+
+    const fetchTimezones = () => {
+      const timeZoneList = moment.tz.names();
+      setTimezones(timeZoneList);
+    }
+
+    detectTZ();
+    fetchTimezones();
+  }, []);
+
+  const handleChange = (event) => {
+    setSelectedTimezone(event.target.value);
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+          <h1>TimePickerPOC 1</h1>
+          <div>
+            <input aria-label="Time" type="time" />
+          </div>
+          <div>        
+            <select value={selectedTimezone} onChange={handleChange}>
+              {timezones.map((timezone, index) => (
+                <option key={index} value={timezone}>
+                  {timezone}
+                </option>
+              ))}
+            </select>
+          </div>
+      </div>
+      <div>
+        <h1>TimePickerPOC 2</h1>
+        <div>
+          <input aria-label="Time" type="time" />
+          <h4>Your Timezone: {userTZ}</h4>
+        </div>        
+      </div>
     </div>
   );
 }
